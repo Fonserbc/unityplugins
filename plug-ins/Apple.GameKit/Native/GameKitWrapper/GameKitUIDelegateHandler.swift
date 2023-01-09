@@ -12,7 +12,7 @@ public class GameKitUIDelegateHandler : NSObject {
     var _taskId : Int64? = nil;
     var _onSuccess : SuccessTaskCallback? = nil;
     
-    init(taskId: Int64, onSuccess : @escaping SuccessTaskCallback) {
+    public func set(taskId: Int64, onSuccess : @escaping SuccessTaskCallback) {
         _taskId = taskId;
         _onSuccess = onSuccess;
     }

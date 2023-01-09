@@ -8,7 +8,7 @@
 import Foundation
 import GameKit
 
-var _currentPresentingGameCenterDelegate : GameKitUIDelegateHandler? = nil;
+var _currentPresentingGameCenterDelegate : GameKitUIDelegateHandler? = GameKitUIDelegateHandler();
 
 @_cdecl("GKGameCenterViewController_Free")
 public func GKGameCenterViewController_Free
@@ -26,6 +26,7 @@ public func GKGameCenterViewController_InitWithState
 ) -> UnsafeMutableRawPointer
 {
     let target = GKGameCenterViewController.init(state: GKGameCenterViewControllerState.init(rawValue: state)!);
+    target.gameCenterDelegate = _currentPresentingGameCenterDelegate;
     return Unmanaged.passRetained(target).toOpaque();
 }
 
@@ -42,6 +43,7 @@ public func GKGameCenterViewController_InitWithLeaderboard
         leaderboardID: leaderboard.baseLeaderboardID,
         playerScope: GKLeaderboard.PlayerScope.init(rawValue: playerScope)!,
         timeScope: GKLeaderboard.TimeScope.init(rawValue: timeScope)!);
+    target.gameCenterDelegate = _currentPresentingGameCenterDelegate;
     
     return Unmanaged.passRetained(target).toOpaque();
     
@@ -55,6 +57,7 @@ public func GKGameCenterViewController_InitWithAchievement
 {
     let achievement = Unmanaged<GKAchievement>.fromOpaque(achievementPtr).takeUnretainedValue();
     let target = GKGameCenterViewController.init(achievementID: achievement.identifier);
+    target.gameCenterDelegate = _currentPresentingGameCenterDelegate;
     
     return Unmanaged.passRetained(target).toOpaque();
     
@@ -69,7 +72,7 @@ public func GKGameCenterViewController_Present
 )
 {
     let target = Unmanaged<GKGameCenterViewController>.fromOpaque(pointer).takeUnretainedValue();
-    _currentPresentingGameCenterDelegate = GameKitUIDelegateHandler(taskId: taskId, onSuccess: onSuccess);
+    _currentPresentingGameCenterDelegate?.set(taskId: taskId, onSuccess: onSuccess);
     
 #if os(iOS) || os(tvOS)
     let viewController = UIApplication.shared.windows.first!.rootViewController;
